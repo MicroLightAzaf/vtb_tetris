@@ -2968,7 +2968,8 @@ function Input() {
  * @static
  * @method initialize
  */
-Input.initialize = function() {
+Input.initialize = function () {
+    this.running = true;
     this.clear();
     this._wrapNwjsAlert();
     this._setupEventHandlers();
@@ -3014,9 +3015,14 @@ Input.keyMapper = {
     39: 'right',    // right arrow
     40: 'down',     // down arrow
     45: 'escape',   // insert
-    81: 'pageup',   // Q
-    85: 'skillone', // U
-    87: 'pagedown', // W
+    49: 'itemone', // 1
+    50: 'itemtwo', // 2
+    51: 'itemthree', // 3
+    52: 'itemfour', // 4
+    81: 'skillone',   // Q
+    87: 'skilltwo', // W
+    69: 'skillthree', // E
+    82: 'itemshift', // R
     88: 'escape',   // X
     90: 'ok',       // Z
     96: 'escape',   // numpad 0
@@ -3056,8 +3062,14 @@ Input.gamepadMapper = {
 Input.clear = function() {
     this._currentState = {};
     this._previousState = {};
+    //I modified it.
+    this._currentGamePadState = {};
+    this._previousGamePadState = {};
+
     this._gamepadStates = [];
     this._latestButton = null;
+    this._latestButtons = [];
+    this._latestGamePadButtons = [];
     this._pressedTime = 0;
     this._dir4 = 0;
     this._dir8 = 0;
@@ -3071,23 +3083,45 @@ Input.clear = function() {
  * @static
  * @method update
  */
-Input.update = function() {
-    this._pollGamepads();
-    if (this._currentState[this._latestButton]) {
-        this._pressedTime++;
-    } else {
-        this._latestButton = null;
-    }
-    for (var name in this._currentState) {
-        if (this._currentState[name] && !this._previousState[name]) {
-            this._latestButton = name;
-            this._pressedTime = 0;
-            this._date = Date.now();
+Input.update = function () {
+    if (this.running) {
+        this._pollGamepads();
+        if (this._currentState[this._latestButton]) {
+            this._pressedTime++;
+        } else {
+            this._latestButton = null;
         }
-        this._previousState[name] = this._currentState[name];
+        this._latestButtons = [];
+        this._latestGamePadButtons = [];
+        for (var name in this._currentState) {
+            if (this._currentState[name] && !this._previousState[name]) {
+                this._latestButtons.push(name);
+                this._latestButton = name;
+                this._pressedTime = 0;
+                this._date = Date.now();
+            }
+
+            if (this._currentGamePadState[name] && !this._previousGamePadState[name]) {
+                this._latestGamePadButtons.push(name);
+            }
+            this._previousGamePadState[name] = this._currentGamePadState[name];
+            this._previousState[name] = this._currentState[name];
+        }
+        this._updateDirection();
     }
-    this._updateDirection();
 };
+
+Input.stop = function () {
+    this.running = false;
+}
+
+Input.begin = function () {
+    this.running = true;
+}
+
+Input.isRunning = function () {
+    return this.running;
+}
 
 /**
  * Checks whether a key is currently pressed down.
@@ -3098,6 +3132,14 @@ Input.update = function() {
  * @return {Boolean} True if the key is pressed
  */
 Input.isPressed = function(keyName) {
+    if (this._isEscapeCompatible(keyName) && this.isPressed('escape')) {
+        return true;
+    } else {
+        return !!this._currentGamePadState[keyName];
+    }
+};
+
+Input.isPressed = function (keyName) {
     if (this._isEscapeCompatible(keyName) && this.isPressed('escape')) {
         return true;
     } else {
@@ -3113,13 +3155,33 @@ Input.isPressed = function(keyName) {
  * @param {String} keyName The mapped name of the key
  * @return {Boolean} True if the key is triggered
  */
-Input.isTriggered = function(keyName) {
+Input.isTriggered = function (keyName) {
     if (this._isEscapeCompatible(keyName) && this.isTriggered('escape')) {
         return true;
     } else {
-        return this._latestButton === keyName && this._pressedTime === 0;
+        for (var i = 0; i < this._latestButtons.length; i++) {
+            if (this._latestButtons[i] === keyName) {
+                return true;
+            }
+        }
     }
 };
+
+Input.isTriggered_Gamepad = function (keyName) {
+    if (this._isEscapeCompatible(keyName) && Input.isTriggered_Gamepad('escape')) {
+        return true;
+    } else {
+        for (var i = 0; i < this._latestGamePadButtons.length; i++) {
+            if (this._latestGamePadButtons[i] === keyName) {
+                return true;
+            }
+        }
+    }
+};
+
+Input.getLastestButtons = function () {
+    return this._latestButtons;
+}
 
 /**
  * Checks whether a key is just pressed or a key repeat occurred.
@@ -3347,7 +3409,11 @@ Input._updateGamepadState = function(gamepad) {
         if (newState[j] !== lastState[j]) {
             var buttonName = this.gamepadMapper[j];
             if (buttonName) {
-                this._currentState[buttonName] = newState[j];
+                if (!TetrisManager.twoPMode) {
+                    this._currentState[buttonName] = newState[j];
+                } else {
+                    this._currentGamePadState[buttonName] = newState[j];
+                }
             }
         }
     }
@@ -3485,7 +3551,8 @@ TouchInput.keyRepeatInterval = 6;
  * @static
  * @method clear
  */
-TouchInput.clear = function() {
+TouchInput.clear = function () {
+    this._currentTouches = [];
     this._mousePressed = false;
     this._screenPressed = false;
     this._pressedTime = 0;
@@ -3811,6 +3878,7 @@ TouchInput._onTouchStart = function(event) {
             this._screenPressed = true;
             this._pressedTime = 0;
             if (event.touches.length >= 2) {
+                this._currentTouches = event.touches;
                 this._onCancel(x, y);
             } else {
                 this._onTrigger(x, y);
@@ -3822,6 +3890,15 @@ TouchInput._onTouchStart = function(event) {
         event.preventDefault();
     }
 };
+
+TouchInput._isTouched = function (x, y) {
+    for (var i = 0; i < this._currentTouches; i++) {
+        if (x === this._currentTouches[i].pageX && y === this._currentTouches[i].pageY) {
+            return true;
+        }
+    }
+    return false;
+}
 
 /**
  * @static
