@@ -4,6 +4,8 @@
 
 var TetrisManager = TetrisManager || {};
 
+PIXI.autoDetectRenderer.antialias = true;
+
 TetrisManager.Temps = {};
 
 TetrisManager.Records = {};
@@ -346,6 +348,20 @@ TetrisManager.AboveLines = 16;
 
 TetrisManager.AiSpeed = 0;
 
+TetrisManager.Xrevision = 23;
+
+TetrisManager.simpleCopySprite = function (s) {
+	var t = new Sprite();
+	t.bitmap = s.bitmap;
+	t.x = s.x;
+	t.y = s.y;
+	t.scale.x = s.scale.x;
+	t.scale.y = s.scale.y;
+	t.opacity = s.opacity;
+	t.rotation = s.rotation;
+	return t;
+}
+
 TetrisManager.pariticleSet = {};
 
 TetrisManager.pariticleSet['Fire'] = {
@@ -507,8 +523,8 @@ TetrisManager.pariticleSet['Angry'] = {
 		"end": 0
 	},
 	"scale": {
-		"start": 0.1,
-		"end": 0.1,
+		"start": 0.5,
+		"end": 0.5,
 		"minimumScaleMultiplier": 7
 	},
 	"color": {
@@ -541,7 +557,7 @@ TetrisManager.pariticleSet['Angry'] = {
 	"blendMode": "normal",
 	"frequency": 0.001,
 	"emitterLifetime": -1,
-	"maxParticles": 1,
+	"maxParticles": 5,
 	"pos": {
 		"x": 0,
 		"y": 0
@@ -556,8 +572,218 @@ TetrisManager.pariticleSet['Angry'] = {
 	}
 }
 
-TetrisManager.pariticleAssetNumbers = {
-	'Angry': 3
+TetrisManager.pariticleSet['Rage'] = {
+	"alpha": {
+		"start": 1,
+		"end": 0
+	},
+	"scale": {
+		"start": 0.2,
+		"end": 0.01,
+		"minimumScaleMultiplier": 5
+	},
+	"color": {
+		"start": "#ff6600",
+		"end": "#000000"
+	},
+	"speed": {
+		"start": 200,
+		"end": 50,
+		"minimumSpeedMultiplier": 0.01
+	},
+	"acceleration": {
+		"x": 0,
+		"y": 0
+	},
+	"maxSpeed": 0,
+	"startRotation": {
+		"min": 270,
+		"max": 270
+	},
+	"noRotation": false,
+	"rotationSpeed": {
+		"min": 0,
+		"max": 0
+	},
+	"lifetime": {
+		"min": 0.5,
+		"max": 5
+	},
+	"blendMode": "normal",
+	"frequency": 0.001,
+	"emitterLifetime": -1,
+	"maxParticles": 500,
+	"pos": {
+		"x": 0,
+		"y": 0
+	},
+	"addAtBack": false,
+	"spawnType": "rect",
+	"spawnRect": {
+		"x": 0,
+		"y": 0,
+		"w": 1200,
+		"h": 0
+	}
+}
+
+TetrisManager.pariticleSet['semi-fire-left'] = {
+	"alpha": {
+		"start": 0.8,
+		"end": 0.1
+	},
+	"scale": {
+		"start": 0.3,
+		"end": 0.001,
+		"minimumScaleMultiplier": 1
+	},
+	"color": {
+		"start": "#ff4040",
+		"end": "#ff4040"
+	},
+	"speed": {
+		"start": 0,
+		"end": 0,
+		"minimumSpeedMultiplier": 1
+	},
+	"acceleration": {
+		"x": 50,
+		"y": 0
+	},
+	"maxSpeed": 0,
+	"startRotation": {
+		"min": 0,
+		"max": 0
+	},
+	"noRotation": false,
+	"rotationSpeed": {
+		"min": 0,
+		"max": 0
+	},
+	"lifetime": {
+		"min": 1,
+		"max": 1
+	},
+	"blendMode": "normal",
+	"frequency": 0.01,
+	"emitterLifetime": -1,
+	"maxParticles": 100,
+	"pos": {
+		"x": 0,
+		"y": 0
+	},
+	"addAtBack": false,
+	"spawnType": "rect",
+	"spawnRect": {
+		"x": 0,
+		"y": 0,
+		"w": 0,
+		"h": 600
+	}
+};
+
+TetrisManager.pariticleSet['semi-fire-right'] = {
+	"alpha": {
+		"start": 0.8,
+		"end": 0.1
+	},
+	"scale": {
+		"start": 0.3,
+		"end": 0.001,
+		"minimumScaleMultiplier": 1
+	},
+	"color": {
+		"start": "#ff4040",
+		"end": "#ff4040"
+	},
+	"speed": {
+		"start": 0,
+		"end": 0,
+		"minimumSpeedMultiplier": 1
+	},
+	"acceleration": {
+		"x": -50,
+		"y": 0
+	},
+	"maxSpeed": 0,
+	"startRotation": {
+		"min": 0,
+		"max": 0
+	},
+	"noRotation": false,
+	"rotationSpeed": {
+		"min": 0,
+		"max": 0
+	},
+	"lifetime": {
+		"min": 1,
+		"max": 1
+	},
+	"blendMode": "normal",
+	"frequency": 0.01,
+	"emitterLifetime": -1,
+	"maxParticles": 100,
+	"pos": {
+		"x": 0,
+		"y": 0
+	},
+	"addAtBack": false,
+	"spawnType": "rect",
+	"spawnRect": {
+		"x": 0,
+		"y": 0,
+		"w": 0,
+		"h": 600
+	}
+};
+
+TetrisManager.pariticleSet['trail'] ={
+	"alpha": {
+		"start": 0.8,
+		"end": 0.1
+	},
+	"scale": {
+		"start": 0.5,
+		"end": 0.3,
+		"minimumScaleMultiplier": 1
+	},
+	"color": {
+		"start": "#03ff25",
+		"end": "#ffffff"
+	},
+	"speed": {
+		"start": 0,
+		"end": 0,
+		"minimumSpeedMultiplier": 1
+	},
+	"acceleration": {
+		"x": 0,
+		"y": 0
+	},
+	"maxSpeed": 0,
+	"startRotation": {
+		"min": 0,
+		"max": 0
+	},
+	"noRotation": false,
+	"rotationSpeed": {
+		"min": 0,
+		"max": 0
+	},
+	"lifetime": {
+		"min": 0.2,
+		"max": 0.2
+	},
+	"blendMode": "normal",
+	"frequency": 0.008,
+	"emitterLifetime": -1,
+	"maxParticles": 1000,
+	"pos": {
+		"x": 0,
+		"y": 0
+	},
+	"addAtBack": false,
+	"spawnType": "point"
 }
 
 TetrisManager.seSet = {};
@@ -568,6 +794,10 @@ TetrisManager.seSet['Wind7'] ={
 	pitch: 60,
 	volume: 125
 };
+
+TetrisManager.starPic = ImageManager.loadPicture('ui/signStar');
+
+TetrisManager.autoStart = false;
 
 //============================================================
 // 成就参数
@@ -670,10 +900,11 @@ Scene_Boot.prototype.start = function () {
 //============================================================
 
 TetrisManager.PlaceTest = function (battler, tempBlock, cur) {
-	var rotation = cur.rotation;
 	var box = cur.box;
-	var x = Math.floor((tempBlock.x - battler.xposition) / battler.xrange);
-	var y = Math.floor((tempBlock.y - battler.yposition) / battler.yrange);
+	var x = Math.floor((tempBlock.x - TetrisManager.Xrevision) / battler.xrange);
+	var y = Math.floor((tempBlock.y) / battler.yrange)
+		+ TetrisManager.AboveLines - 1
+		- Math.floor((3 + (-battler.yrange + 25)) / battler.yrange);
 
 	if (box) {
 		var len = box.length;
@@ -702,11 +933,16 @@ TetrisManager.rotateRight = function (battler) {
 	};
 	var type = battler.cur.type;
 	var rotation = battler.cur.rotation;
-	if ((rotation + 1) < (TetrisManager.data[type].length)) {
-		tempCur.box = TetrisManager.data[type][rotation + 1];
+	if (TetrisManager.block_pics.contains(type)) {
+		var data = TetrisManager.data;
+	} else {
+		var data = TetrisManager.specialBlockData;
+    }
+	if ((rotation + 1) < (data[type].length)) {
+		tempCur.box = data[type][rotation + 1];
 		tempCur.rotation += 1;
 	} else {
-		tempCur.box = TetrisManager.data[type][0];
+		tempCur.box = data[type][0];
 		tempCur.rotation = 0;
 	}
 	return tempCur;
@@ -719,12 +955,17 @@ TetrisManager.rotateLeft = function (battler) {
 	};
 	var type = battler.cur.type;
 	var rotation = battler.cur.rotation;
+	if (TetrisManager.block_pics.contains(type)) {
+		var data = TetrisManager.data;
+	} else {
+		var data = TetrisManager.specialBlockData;
+	}
 	if (rotation - 1 >= 0) {
-		tempCur.box = TetrisManager.data[type][rotation - 1];
+		tempCur.box = data[type][rotation - 1];
 		tempCur.rotation -= 1;
 	} else {
-		tempCur.box = TetrisManager.data[type][TetrisManager.data[type].length - 1];
-		tempCur.rotation = TetrisManager.data[type].length - 1;
+		tempCur.box = data[type][data[type].length - 1];
+		tempCur.rotation = data[type].length - 1;
 	}
 
 	return tempCur;
@@ -746,6 +987,14 @@ TetrisManager.rotationRule = function (battler, direction) {
 	}
 	if ((battler.cur.type == '1')) {
 		Rule = TetrisManager.IRuleSet[((tempBlock.rotationTime % 4) + '')];
+	}
+
+	if ((battler.cur.type == 'purples')) {
+		Rule = TetrisManager.specialRuleSet['purples'][((tempBlock.rotationTime % 4) + '')];
+	}
+
+	if ((battler.cur.type == 'six')) {
+		Rule = TetrisManager.specialRuleSet['six'][((tempBlock.rotationTime % 4) + '')];
 	}
 
 	if (tempBlock.rotationTime > battler.cur.rotationTime) {
@@ -779,51 +1028,43 @@ TetrisManager.kickTheWall = function (battler, tempBlock, tempBox, direction) {
 	var key = beginning + "to" + ending;
 
 	if (type == "1") {
-		for (i in TetrisManager.IKick[key]) {
-			var smallTemp = {
-				x: tempBlock.x,
-				y: tempBlock.y
-			}
-			smallTemp.x += TetrisManager.IKick[key][i][0] * battler.xrange;
-			smallTemp.y += TetrisManager.IKick[key][i][1] * battler.yrange;
-			if (TetrisManager.PlaceTest(battler, smallTemp, tempBox)) {
-				FinalResult = {
-					x: smallTemp.x,
-					y: smallTemp.y,
-					rotationTime: tempBlock.rotationTime,
-					box: tempBox.box,
-					rotation: tempBox.rotation,
-				}
-				return FinalResult;
-			}
-		}
-		return null;
+		var kickTable = TetrisManager.IKick;
 	}
 
 	if (type != "o" && type != "1") {
-		for (i in TetrisManager.generalKick[key]) {
-			var smallTemp = {
-				x: tempBlock.x,
-				y: tempBlock.y
-			}
-			smallTemp.x += TetrisManager.generalKick[key][i][0] * battler.xrange;
-			smallTemp.y += TetrisManager.generalKick[key][i][1] * battler.yrange;
-			if (TetrisManager.PlaceTest(battler, smallTemp, tempBox)) {
-				FinalResult = {
-					x: smallTemp.x,
-					y: smallTemp.y,
-					rotationTime: tempBlock.rotationTime,
-					box: tempBox.box,
-					rotation: tempBox.rotation,
-				}
-				return FinalResult;
-			}
-		}
-		return null;
+		var kickTable = TetrisManager.generalKick;
 	}
+
+	if (!TetrisManager.block_pics.contains(type)) {
+		var kickTable = TetrisManager.specialKick;
+    }
+
+
+	for (i in kickTable[key]) {
+		var smallTemp = {
+			x: tempBlock.x,
+			y: tempBlock.y
+		}
+		smallTemp.x += kickTable[key][i][0] * battler.xrange;
+		smallTemp.y += kickTable[key][i][1] * battler.yrange;
+		if (TetrisManager.PlaceTest(battler, smallTemp, tempBox)) {
+			FinalResult = {
+				x: smallTemp.x,
+				y: smallTemp.y,
+				rotationTime: tempBlock.rotationTime,
+				box: tempBox.box,
+				rotation: tempBox.rotation,
+			}
+			return FinalResult;
+		}
+	}
+	return null;
 }
 
 TetrisManager.getRotationResult = function (battler, direction) {
+	if (battler.cur.type == 'o') {
+		return
+    }
 	var tempBlock = TetrisManager.rotationRule(battler, direction);
 	if (direction == 1) {
 		tempBox = TetrisManager.rotateRight(battler);
@@ -835,10 +1076,13 @@ TetrisManager.getRotationResult = function (battler, direction) {
 }
 
 TetrisManager.collide = function (battler, cur) {
-	box = cur.box;
-	len = cur.box.length;
-	x = Math.floor((cur.block.x - battler.xposition) / battler.xrange);
-	y = Math.floor((cur.block.y - battler.yposition) / battler.yrange) + 1;
+	var box = cur.box;
+	var len = cur.box.length;
+	var x = Math.floor((cur.block.x - TetrisManager.Xrevision) / battler.xrange);
+	var y = Math.floor((cur.block.y) / battler.yrange)
+		+ TetrisManager.AboveLines - 1 + 1
+		- Math.floor((3 + (-battler.yrange + 25)) / battler.yrange);
+		//+ Math.floor(3 + (-battler.yrange + 25) / battler.yrange);
 	for (i = 0; i < len; i++) {
 		if (i + y >= 0) {
 			for (j = 0; j < box[i].length; j++) {
@@ -890,16 +1134,28 @@ TetrisManager.keepTwoDigits = function (num) {
 }
 
 TetrisManager.setTimer = function () {
-	TetrisManager.oldTime = Date.now();
-	TetrisManager.TimerActivated = true;
+	this.lastTime = 0;
+	this.oldTime = Date.now();
+	this.TimerActivated = true;
 }
 
 TetrisManager.getElapsedTime = function () {
-	if (TetrisManager.TimerActivated) {
-		return Math.floor((Date.now() - TetrisManager.oldTime) / 10) / 100;
+	if (this.TimerActivated) {
+		var time = (Math.floor((Date.now() - this.oldTime + this.lastTime) / 10) / 100)
+		return time;
 	} else {
 		return 0;
     }
+}
+
+TetrisManager.pauseTimer = function () {
+	this.lastTime = this.getElapsedTime()*1000;
+	this.TimerActivated = false;
+}
+
+TetrisManager.continueTimer = function () {
+	this.oldTime = Date.now();
+	this.TimerActivated = true;
 }
 
 TetrisManager.desetTimer = function () {
@@ -916,8 +1172,17 @@ TetrisManager.randomnize = function (p) {
     }
 }
 
+TetrisManager.componentToHex = function (c) {
+	var hex = c.toString(16);
+	return hex.length == 1 ? "0" + hex : hex;
+}
+
+TetrisManager.rgbToHex = function (r, g, b) {
+	return Number("0x" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b));
+}
+
 //============================================================
-// 内部方法继承
+// 内部方法继承与覆写
 //============================================================
 
 //TODO: Damn, why is the call method not working???
@@ -966,6 +1231,12 @@ Bitmap.prototype.drawPolygon = function (pointList) {
     }
 }
 
+TetrisManager.Temps.Game_Actor_Initialize = Game_Actor.prototype.initialize;
+Game_Actor.prototype.initialize = function (actorId) {
+	TetrisManager.Temps.Game_Actor_Initialize.call(this, actorId);
+	this._signedItems = [];
+};
+
 //=============================================================================
 // 小组件定义
 //=============================================================================
@@ -985,6 +1256,9 @@ Tetris_Window.prototype.initialize = function (x, y, width, height) {
 Tetris_Window.prototype.refresh = function () {
 	this.contents.clear();
 }
+
+//-----------------------------------------------------------------------------
+// icon 的超类
 
 //-----------------------------------------------------------------------------
 
@@ -1138,11 +1412,22 @@ AfterMath_Window.prototype.isLayed = function () {
 
 TetrisManager.HarmSystem = {};
 
+/**
+ * 造成伤害和治疗的主方法.
+ *
+ * @method TetrisManager.HarmSystem.dealDamage
+ * @param {Any} source 伤害来源
+ * @param {Any} target 伤害目标
+ * @param {Number} amount 伤害量
+ * @param {String} type 伤害类型
+ */
 TetrisManager.HarmSystem.dealDamage = function (source, target, amount, type) {
 	var scene = SceneManager._scene;
 	if (target) {
 		var finaldamage = amount
 		var atkType = type
+		var effective = false;
+		//公式调整
 		switch (atkType) {
 			case 'normal':
 				finaldamage = 3 * amount - 2 * target.def;
@@ -1152,20 +1437,49 @@ TetrisManager.HarmSystem.dealDamage = function (source, target, amount, type) {
 					atkType = 'critical';
 				}
 				break;
-        }
+			case 'recover':
+				finaldamage = 3 * amount - 2 * target.def;
+				finaldamage = source.Damage_mag * finaldamage
+				if (source.cri && TetrisManager.randomnize(source.cri)) {
+					finaldamage = finaldamage + source.Critical_mag * finaldamage;
+					atkType = 'critical';
+				}
+				if (finaldamage >= 0) {
+					source.actor.gainHp(finaldamage);
+					var pop = new PopNumber(new FNumber(finaldamage, 7));
+					scene._blockLayer.addChild(pop)
+					pop.move(source.gauge_pos[0], source.gauge_pos[1]);
+					pop.setTint(0x00ff00);
+					pop.activate();
+                }
+				var e = new LifeStealEffect(target);
+				scene._effectLayer.addChild(e);
+				break;
+		}
+		//伤害调整
+		if (finaldamage > 0) {
+			finaldamage = finaldamage * target.Be_Damaged_mag;
+		}
+		//敌人的场合
 		if (target.category == "enemy") {
-			if (finaldamage >= 0) {
+			if (atkType == 'healing') {
 				target.curHp -= finaldamage;
-			}
+			} else {
+				if (finaldamage >= 0) {
+					target.curHp -= finaldamage;
+				} else {
+					finaldamage = 0;
+                }
+            }
 			if (target.curHp < 0) {
 				target.curHp = 0;
 				target.living = false;
 				scene.changeTarget();
 			}
-			var pop = new PopNumber(new FNumber(finaldamage, 7));
+			var pop = new PopNumber(new FNumber(Math.abs(finaldamage), 7));
 			scene._blockLayer.addChild(pop)
 			pop.move(target.gauge_pos[0], target.gauge_pos[1]);
-			//pop.move(target.xposition + 5 * target.xrange, target.yposition + TetrisManager.AboveLines * target.yrange + 10 * target.yrange);
+
 			switch (atkType) {
 				case 'normal':
 					break;
@@ -1175,19 +1489,32 @@ TetrisManager.HarmSystem.dealDamage = function (source, target, amount, type) {
 				case 'critical':
 					pop.setTint(0xffc34d)
 					break;
+				case 'healing':
+					pop.setTint(0x00ff00)
+					break;
 			}
 			pop.activate();
+
 			//this.createXYanimationWindow(1, target.xposition + 5 * target.xrange, target.yposition + TetrisManager.AboveLines * target.yrange + 12 * target.yrange);
+		//玩家的场合
 		} else {
-			if (finaldamage >= 0) {
+			if (atkType == 'healing') {
 				target.actor.gainHp(-finaldamage);
+			} else {
+				if (finaldamage >= 0) {
+					target.actor.gainHp(-finaldamage);
+				} else {
+					finaldamage = 0;
+                }
 			}
-			var pop = new PopNumber(new FNumber(finaldamage, 7));
+			var pop = new PopNumber(new FNumber(Math.abs(finaldamage), 7));
 			scene._blockLayer.addChild(pop)
 			pop.move(target.gauge_pos[0], target.gauge_pos[1])
 			//pop.move(target.pictureBoard.x + target.pictureBoard.width / 2, target.pictureBoard.y + target.pictureBoard.height / 2)
 			switch (atkType) {
 				case 'normal':
+					target.picture.shake(10);
+					target.picture.blink(0xff6666);
 					break;
 				case 'poison':
 					pop.setTint(0xff99ff)
@@ -1195,8 +1522,20 @@ TetrisManager.HarmSystem.dealDamage = function (source, target, amount, type) {
 				case 'critical':
 					pop.setTint(0xffc34d)
 					break;
+				case 'healing':
+					pop.setTint(0x00ff00)
+					break;
+				case 'real':
+					target.picture.shake(10);
+					target.picture.blink(0xff6666);
+					break;
             }
 			pop.activate();
+			if (source.AtkAnim) {
+				scene.createXYanimationWindow(source.AtkAnim,
+					target.pic_pos[0] + (150 * Math.random() - 75),
+					target.pic_pos[1] + (150 * Math.random() - 75));
+            }
 			//this.createXYanimationWindow(1, target.pictureBoard.x + target.pictureBoard.width / 2, target.pictureBoard.y + target.pictureBoard.height / 2);
 		}
 	}
@@ -1445,9 +1784,10 @@ itemBoard.prototype.constructor = itemBoard;
 
 itemBoard.prototype.initialize = function () {
 	Sprite.prototype.initialize.call(this);
-	this._data = $gameParty.allItems().filter(function (item) {
-		return DataManager.isItem(item) && item.itypeId === 1;
-	}, this);
+	this._data = $gameActors.actor(1)._signedItems
+	//$gameParty.allItems().filter(function (item) {
+	//	return DataManager.isItem(item) && item.itypeId === 1;
+	//}, this);
 	this.boardIndex = 0;
 	this.setIndex = 0;
 	this.lastSet = -1;
@@ -1604,34 +1944,41 @@ itemIcon.prototype.constructor = itemIcon;
 
 itemIcon.prototype.initialize = function (item) {
 	Sprite.prototype.initialize.call(this);
-	var iconIndex = item.iconIndex
-	this.icon = new Sprite(ImageManager.loadSystem('IconSet'))
-	var pw = 32;
-	var ph = 32;
-	var sx = iconIndex % 16 * pw;
-	var sy = Math.floor(iconIndex / 16) * ph;
-	this.icon.setFrame(sx, sy, pw, ph);
-	this.icon.move(3, 3);
-	this.addChild(this.icon);
-	this.iconFrame = new Sprite(ImageManager.loadPicture('ui\\ItemFrame'));
-	this.iconCover = new Sprite(ImageManager.loadPicture('ui\\ItemCover'));
-	this.iconCover.opacity = 0;
-	this.addChild(this.iconFrame);
-	this.addChild(this.iconCover);
-	this.hotKeyTxt = new Sprite(new Bitmap(32, 32));
-	this.hotKeyTxt.bitmap.fontSize = 14;
-	this.hotKeyTxt.anchor.y = 0.5;
-	this.addChild(this.hotKeyTxt);
-	this.numTxt = new Sprite(new Bitmap(32, 32));
-	this.numTxt.bitmap.fontSize = 18;
-	this.numTxt.move(0, 16);
-	this.addChild(this.numTxt);
-	this.writeNum($gameParty.numItems(item))
-	this.anchor.x = 0.5;
-	this.anchor.y = 0.5;
+	if (item) {
+		var iconIndex = item.iconIndex
+		this.icon = new Sprite(ImageManager.loadSystem('IconSet'))
+		var pw = 32;
+		var ph = 32;
+		var sx = iconIndex % 16 * pw;
+		var sy = Math.floor(iconIndex / 16) * ph;
+		this.icon.setFrame(sx, sy, pw, ph);
+		this.icon.move(3, 3);
+		this.addChild(this.icon);
+		this.iconFrame = new Sprite(ImageManager.loadPicture('ui\\ItemFrame'));
+		this.iconCover = new Sprite(ImageManager.loadPicture('ui\\ItemCover'));
+		this.iconCover.opacity = 0;
+		this.addChild(this.iconFrame);
+		this.addChild(this.iconCover);
+		this.hotKeyTxt = new Sprite(new Bitmap(32, 32));
+		this.hotKeyTxt.bitmap.fontSize = 14;
+		this.hotKeyTxt.anchor.y = 0.5;
+		this.addChild(this.hotKeyTxt);
+		this.numTxt = new Sprite(new Bitmap(32, 32));
+		this.numTxt.bitmap.fontSize = 18;
+		this.numTxt.move(0, 16);
+		this.addChild(this.numTxt);
+		this.writeNum($gameParty.numItems(item))
+		this.anchor.x = 0.5;
+		this.anchor.y = 0.5;
 
-	this.shining = false;
-	this.shined = false;
+		this.shining = false;
+		this.shined = false;
+	} else {
+		this.iconFrame = new Sprite(ImageManager.loadPicture('ui\\ItemFrame'));
+		this.addChild(this.iconFrame);
+		this.anchor.x = 0.5;
+		this.anchor.y = 0.5;
+    }
 }
 
 itemIcon.prototype.update = function () {
@@ -1777,6 +2124,122 @@ MergeEffect.prototype.update = function () {
 
 //-----------------------------------------------------------------------------
 
+function Text_Base() {
+	this.initialize.apply(this, arguments);
+}
+
+Text_Base.prototype = Object.create(Sprite.prototype);
+Text_Base.prototype.constructor = Text_Base;
+
+Text_Base.prototype.initialize = function (text, width, height, size, align) {
+	Sprite.prototype.initialize.call(this);
+	this.bitmap = new Bitmap(width, height);
+	this.bitmap.fontSize = size;
+	this.bitmap.drawText(text, 0, 0, width, height, align);
+}
+
+//-----------------------------------------------------------------------------
+
+function ShiningText() {
+	this.initialize.apply(this, arguments);
+}
+
+ShiningText.prototype = Object.create(Text_Base.prototype);
+ShiningText.prototype.constructor = ShiningText;
+
+ShiningText.prototype.initialize = function (text, width, height, size) {
+	Text_Base.prototype.initialize.call(this, text, width, height, size, 'center');
+	this.layed = false;
+	this.opacity = 0;
+	this.anchor.x = 0.5;
+	this.anchor.y = 0.5;
+}
+
+ShiningText.prototype.update = function () {
+	Text_Base.prototype.update.call(this);
+	if (!this.layed) {
+		this.opacity += 5;
+		if (this.opacity >= 255) {
+			this.layed = true;
+		}
+	} else {
+		this.opacity -= 5;
+		if (this.opacity <= 0) {
+			this.layed = false;
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+
+function FloatingText(){
+	this.initialize.apply(this, arguments);
+}
+
+FloatingText.prototype = Object.create(Text_Base.prototype);
+FloatingText.prototype.constructor = FloatingText;
+
+FloatingText.prototype.initialize = function (text, width, height, size) {
+	Text_Base.prototype.initialize.call(this, text, width, height, size, 'left');
+	this.layed = false;
+	this.count = 0;
+}
+
+FloatingText.prototype.update = function () {
+	Text_Base.prototype.update.call(this);
+	if (!this.layed) {
+		this.y -= 1;
+		this.count += 1;
+		if (this.count >= 25) {
+			this.layed = true;
+		}
+	} else {
+		this.y += 1;
+		this.count -= 1;
+		if (this.count <= 0) {
+			this.layed = false;
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+
+function ShiningPiece() {
+	this.initialize.apply(this, arguments);
+}
+
+ShiningPiece.prototype = Object.create(Sprite.prototype);
+ShiningPiece.prototype.constructor = ShiningPiece;
+
+ShiningPiece.prototype.initialize = function (width, height) {
+	Sprite.prototype.initialize.call(this);
+	this.piece = new PIXI.Graphics();
+	this.piece.beginFill(0xffffff);
+	this.piece.drawRect(0, 0, width, height);
+	this.piece.endFill();
+
+	this.addChild(this.piece);
+	this.layed = false;
+	this.opacity = 0;
+}
+
+ShiningPiece.prototype.update = function () {
+	Sprite.prototype.update.call(this);
+	if (!this.layed) {
+		this.opacity += 25;
+		if (this.opacity >= 255) {
+			this.layed = true;
+		}
+	} else {
+		this.opacity -= 25;
+		if (this.opacity <= 0) {
+			this.destroy();
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+
 function SkillButton() {
 	this.initialize.apply(this, arguments);
 }
@@ -1868,6 +2331,7 @@ stateBoard.prototype.initialize = function (owner) {
 	this._stateicons = {};
 	this._statelist = {};
 	this.iconPos = 0;
+	this.curTintId = null;
 }
 
 stateBoard.prototype.refreshStates = function () {
@@ -1938,11 +2402,15 @@ stateBoard.prototype.applyStates = function (strid, layers) {
 
 stateBoard.prototype.clearAllStates = function () {
 	for (var strid in this._statelist) {
-		if (this._statelist[strid] && this._statelist[strid].type == 'in_battler') {
+		if (this._statelist[strid] && this._statelist[strid].type == 'in_battle') {
 			var numid = Number(strid);
 			this._owner._states.splice(this._owner._states.indexOf(numid), 1);
         }
-    }
+	}
+
+	if (this._owner.category == 'enemy') {
+		this._owner.avatar.tint = 0xffffff;
+	}
 }
 
 stateBoard.prototype.getStatePosition = function (strid) {
@@ -1953,12 +2421,59 @@ stateBoard.prototype.getStatePosition = function (strid) {
     }
 }
 
+stateBoard.prototype.setAvatarTint = function (numid, tint) {
+	if (this._owner.category == 'enemy') {
+		this._owner.avatar.tint = tint;
+		this.curTintId = numid;
+    }
+}
+
+stateBoard.prototype.removeAvatarTint = function (numid) {
+	if (this._owner.category == 'enemy') {
+		if (this.curTintId === numid) {
+			this._owner.avatar.tint = 0xffffff;
+        }
+	}
+}
+
 stateBoard.prototype.onAttack = function () {
 	for (var strid in this._statelist) {
 		if (this._statelist[strid] && this._statelist[strid].onAttack) {
 			this._statelist[strid].onAttack();
         }
     }
+}
+
+stateBoard.prototype.onDown = function () {
+	for (var strid in this._statelist) {
+		if (this._statelist[strid] && this._statelist[strid].onDown) {
+			this._statelist[strid].onDown();
+		}
+	}
+}
+
+stateBoard.prototype.onBlockChanging = function () {
+	for (var strid in this._statelist) {
+		if (this._statelist[strid] && this._statelist[strid].onBlockChanging) {
+			this._statelist[strid].onBlockChanging();
+		}
+	}
+}
+
+stateBoard.prototype.onShadow = function () {
+	for (var strid in this._statelist) {
+		if (this._statelist[strid] && this._statelist[strid].onShadow) {
+			this._statelist[strid].onShadow();
+		}
+	}
+}
+
+stateBoard.prototype.onEnd = function () {
+	for (var strid in this._statelist) {
+		if (this._statelist[strid] && this._statelist[strid].onEnd) {
+			this._statelist[strid].onEnd();
+		}
+	}
 }
 
 function stateIcon() {
@@ -2020,7 +2535,114 @@ stateIcon.prototype.shine = function () {
 	this.shining = true;
 }
 
-//-----------------------------------------------------------------------------
+//=============================================================================
+// Gauge 构成
+
+function Gauge_base() {
+	this.initialize.apply(this, arguments);
+}
+
+Gauge_base.prototype = Object.create(Sprite.prototype);
+Gauge_base.prototype.constructor = Gauge_base
+
+Gauge_base.prototype.initialize = function (options) {
+	Sprite.prototype.initialize.call(this);
+	this.updateType = options.type;
+	this.changeTime = TetrisManager.GaugeConstant;
+	this.frameSource = options.frameSource;
+	this.barSource = options.barSource;
+	this.backSource = options.backSource;
+	this.x = options.x;
+	this.y = options.y;
+	this.gwidth = options.width;
+	this.gheight = options.height;
+	this.cursor = 0;
+	this.createBack();
+	this.createContent();
+	this.createFrame();
+
+	this.curAmount = 0;
+	this.displayAmount = 0;
+	this.maxAmount = options.maxAmount;
+	this.displayMax = options.maxAmount;
+}
+
+Gauge_base.prototype.createFrame = function () {
+	var w = this.gwidth;
+	var h = this.gheight;
+	var m = 24;
+	var bitmap = new Bitmap(w, h);
+
+	this.frameSprite = new Sprite();
+	this.frameSprite.bitmap = bitmap;
+	this.frameSprite.setFrame(0, 0, w, h);
+	this.addChild(this.frameSprite)
+	if (w > 0 && h > 0 && this.frameSource) {
+		var skin = this.frameSource;
+		var q = 96
+		var p = 96;
+		bitmap.blt(skin, m, 0 + 0, p - m * 2, m, m, 0, w - m * 2, m);
+		bitmap.blt(skin, m, 0 + q - m, p - m * 2, m, m, h - m, w - m * 2, m);
+		bitmap.blt(skin, 0, 0 + m, m, p - m * 2, 0, m, m, h - m * 2);
+		bitmap.blt(skin, q - m, 0 + m, m, p - m * 2, w - m, m, m, h - m * 2);
+		bitmap.blt(skin, 0, 0 + 0, m, m, 0, 0, m, m);
+		bitmap.blt(skin, q - m, 0 + 0, m, m, w - m, 0, m, m);
+		bitmap.blt(skin, 0, 0 + q - m, m, m, 0, h - m, m, m);
+		bitmap.blt(skin, q - m, 0 + q - m, m, m, w - m, h - m, m, m);
+	}
+}
+
+Gauge_base.prototype.createContent = function () {
+	this.contentSprite = new Sprite();
+	this.contentSprite.bitmap = this.barSource;
+	if (this.updateType === 'Horz') {
+		this.contentSprite.move(0, 0);
+		this.contentSprite.setFrame(0, 0, this.gwidth, this.gheight);
+	}
+
+	if (this.updateType === 'Vert') {
+		this.contentSprite.move(0, this.gheight);
+		this.contentSprite.setFrame(0, 0, this.gwidth, this.gheight);
+	}
+	this.addChild(this.contentSprite)
+}
+
+Gauge_base.prototype.createBack = function () {
+	this.backSprite = new Sprite();
+	this.backSprite.bitmap = this.backSource;
+	this.backSprite.setFrame(0, 0, this.gwidth, this.gheight);
+	this.addChild(this.backSprite);
+}
+
+Gauge_base.prototype.update = function () {
+	Sprite.prototype.update.call(this);
+	if (this.displayAmount != this.curAmount) {
+		this.displayAmount += (this.curAmount - this.displayAmount) / this.changeTime;
+	}
+
+	if (this.displayMax != this.maxAmount) {
+		this.displayMax += (this.maxAmount - this.displayMax) / this.changeTime;
+	}
+	var rate = (this.displayAmount / this.displayMax);
+	if (rate >= 1) {
+		rate = 1;
+	}
+	this.contentSprite.setFrame(0, 0, this.gwidth * rate, this.gheight);
+	this.addChild(this.frameSprite)
+}
+
+Gauge_base.prototype.changeNumber = function (num) {
+	this.curAmount = num;
+}
+
+Gauge_base.prototype.changeMax = function (max) {
+	this.maxAmount = max;
+}
+
+//=============================================================================
+
+TetrisManager.testFrame = ImageManager.loadPicture('bars/testFrame3');
+
 
 function VerticalProgressBar() {
 	this.initialize.apply(this, arguments);
@@ -2029,7 +2651,7 @@ function VerticalProgressBar() {
 VerticalProgressBar.prototype = Object.create(Sprite.prototype);
 VerticalProgressBar.prototype.constructor = VerticalProgressBar;
 
-VerticalProgressBar.prototype.initialize = function (maxAmount) {
+VerticalProgressBar.prototype.initialize = function (maxAmount, options) {
 	Sprite.prototype.initialize.call(this);
 	this.changeTime = TetrisManager.GaugeConstant;
 	this.curAmount = 0;
@@ -2038,15 +2660,33 @@ VerticalProgressBar.prototype.initialize = function (maxAmount) {
 	this.displayMax = maxAmount;
 	this.BarContent = new Sprite();
 	this.frame = new Sprite();
-	this.BarContent.bitmap = ImageManager.loadPicture("ui\\BarGrad");
-	this.frame.bitmap = ImageManager.loadPicture("ui\\VerticalProgressBarFrame");
+	if (options && options.content) {
+		this.BarContent.bitmap = options.content;
+	} else {
+		this.BarContent.bitmap = ImageManager.loadPicture("ui\\BarGrad");
+	}
+	if (options && options.frame) {
+		this.frame.bitmap = options.frame;
+	} else {
+		this.frame.bitmap = ImageManager.loadPicture("ui\\VerticalProgressBarFrame");
+    }
 	this.Ycursor = 0;
-	this.maxLength = 250;
+	if (options && options.maxLength) {
+		this.maxLength = options.maxLength;
+	} else {
+		this.maxLength = 250;
+	}
+
+	if (options && options.maxWidth) {
+		this.maxWidth = options.maxWidth;
+	} else {
+		this.maxWidth = 15;
+    }
 	this.cursorAmount = 2;
 
 	this.BarContent.move(0, this.maxLength);
 	this.addChild(this.BarContent);
-	this.BarContent.setFrame(0, this.Ycursor, 15, this.maxLength);
+	this.BarContent.setFrame(0, this.Ycursor, this.maxWidth, this.maxLength);
 	this.addChild(this.frame)
 
 	this.phases = [];
@@ -2076,7 +2716,7 @@ VerticalProgressBar.prototype.update = function () {
 		this.cursorAmount = -2;
 	}
 	this.BarContent.move(0, this.maxLength - Aheight);
-	this.BarContent.setFrame(0, this.Ycursor, 15, Aheight);
+	this.BarContent.setFrame(0, this.Ycursor, this.maxWidth, Aheight);
 
 	if (this.phases) {
 		for (var i = 0; i < this.phases.length; i++) {
@@ -2117,6 +2757,10 @@ VerticalProgressBar.prototype.addPhase = function (amount, picname) {
 	this.phases.push(phase);
 	this.addChild(this.phases[this.phases.length - 1].bar)
 	this.addChild(this.phases[this.phases.length - 1].pic)
+}
+
+VerticalProgressBar.prototype.changeMax = function (max) {
+	this.maxAmount = max;
 }
 
 //-----------------------------------------------------------------------------
@@ -2374,8 +3018,13 @@ targetMark.prototype.aim = function (target) {
 	} else {
 		this.targetScaleX = target.scaleX;
 		this.targetScaleY = target.scaleY;
-		this.targetX = target.xposition + (TetrisManager.ROW / 2) * target.xrange;
-		this.targetY = target.yposition + ((TetrisManager.COL - TetrisManager.AboveLines) / 2) * target.yrange + TetrisManager.AboveLines * target.yrange
+		if (!target.NoAi) {
+			this.targetX = target.xposition + (TetrisManager.ROW / 2) * target.xrange;
+			this.targetY = target.yposition + ((TetrisManager.COL - TetrisManager.AboveLines) / 2) * target.yrange + TetrisManager.AboveLines * target.yrange;
+		} else {
+			this.targetX = target.xposition -5;
+			this.targetY = target.assumeYpos-40;
+        }
 	}
 }
 
@@ -2388,15 +3037,12 @@ function particleEmitter() {
 particleEmitter.prototype = Object.create(Sprite.prototype);
 particleEmitter.prototype.constructor = particleEmitter;
 
-particleEmitter.prototype.initialize = function (ID) {
+particleEmitter.prototype.initialize = function (ID, assets) {
 	Sprite.prototype.initialize.call(this);
-	if (TetrisManager.pariticleAssetNumbers[ID]) {
-		var images = []
-		for (var i = 0; i < TetrisManager.pariticleAssetNumbers[ID]; i++) {
-			images.push(PIXI.Texture.fromImage('img/pictures/Effect/' + ID + '_' + i + '.png'))
-		}
-	} else {
-		var images = [PIXI.Texture.fromImage('img/pictures/Effect/' + ID + '.png')]
+	this.ID = ID;
+	var images = []
+	for (var i = 0; i < assets.length; i++) {
+		images.push(PIXI.Texture.fromImage('img/pictures/Effect/' + assets[i] +'.png'));
     }
 	this._emitter = new PIXI.particles.Emitter(this,
 		images,
@@ -2411,10 +3057,23 @@ particleEmitter.prototype.update = function () {
 	var now = Date.now();
 	this._emitter.update((now - this.time) * 0.001);
 	this.time = now;
+
+	if (this.stopping) {
+		if ((now - this.startStop) * 0.001>= this.stopTime) {
+			this.destroy();
+        }
+    }
 }
 
 particleEmitter.prototype.move = function (x, y) {
 	this._emitter.updateSpawnPos(x, y);
+}
+
+particleEmitter.prototype.stop = function () {
+	this._emitter.emit = false;
+	this.startStop = Date.now();
+	this.stopTime = TetrisManager.pariticleSet[this.ID]['lifetime']['max'];
+	this.stopping = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -2556,6 +3215,178 @@ risingPart.prototype.update = function () {
 }
 
 //-----------------------------------------------------------------------------
+
+function infoBoard() {
+	this.initialize.apply(this, arguments);
+}
+
+infoBoard.prototype = Object.create(Sprite.prototype);
+infoBoard.prototype.constructor = infoBoard
+
+infoBoard.prototype.initialize = function () {
+	Sprite.prototype.initialize.call(this);
+	this._infoList = [];
+}
+
+function info() {
+	this.initialize.apply(this, arguments);
+}
+
+info.prototype = Object.create(Sprite.prototype);
+info.prototype.constructor = info;
+
+info.prototype.initialize = function () {
+	Sprite.prototype.initialize.call(this);
+}
+
+//-----------------------------------------------------------------------------
+
+function WindowGlow() {
+	this.initialize.apply(this, arguments);
+}
+
+WindowGlow.prototype = Object.create(Sprite.prototype);
+WindowGlow.prototype.constructor = WindowGlow;
+
+WindowGlow.prototype.initialize = function (sprite) {
+	Sprite.prototype.initialize.call(this);
+	this.glow_sprite = sprite;
+	this.addChild(this.glow_sprite);
+	this.glow_sprite.opacity = 0;
+	this.phaseFlag = 'increasing'
+	this.timeCount = 0;
+	this._frequency = 60;
+}
+
+WindowGlow.prototype.update = function () {
+	Sprite.prototype.update.call(this);
+
+	switch (this.phaseFlag) {
+		case 'increasing':
+			this.glow_sprite.opacity += 255 / this._frequency;
+			break;
+		case 'decreasing':
+			this.glow_sprite.opacity -= 255 / this._frequency;
+			break;
+		case 'ending':
+			this.glow_sprite.opacity -= 255 / this._frequency;
+			if (this.glow_sprite.opacity <= 0) {
+				this.destroy();
+			}
+			break;
+	}
+
+	if (this.timeCount > this._frequency) {
+		if (this.phaseFlag != 'ending') {
+			if (this.phaseFlag == 'increasing') {
+				this.phaseFlag = 'decreasing'
+			} else {
+				this.phaseFlag = 'increasing'
+			}
+		}
+
+		this.timeCount = 0;
+	}
+
+
+	this.timeCount += 1;
+}
+
+WindowGlow.prototype.stop = function () {
+	this.phaseFlag = 'ending'
+}
+
+//-----------------------------------------------------------------------------
+
+function Tachi() {
+	this.initialize.apply(this, arguments);
+}
+
+Tachi.prototype = Object.create(Sprite.prototype);
+Tachi.prototype.constructor = Tachi;
+
+Tachi.prototype.initialize = function (name) {
+	Sprite.prototype.initialize.call(this);
+	this.bitmap = ImageManager.loadPicture("Tachi/" + name);
+	this.blink_sprite = new Sprite(ImageManager.loadPicture("Tachi/" + name));
+}
+
+Tachi.prototype.update = function () {
+	Sprite.prototype.update.call(this);
+
+	if (this.shakeFlag) {
+		if (this.shakeCount % 4 == 0) {
+			if (this.shaked) {
+				this.x -= 10;
+				this.shaked = false;
+			} else {
+				this.x += 10;
+				this.shaked = true;
+            }
+        }
+		this.shakeCount += 1;
+		if (this.shakeCount >= this.shakeTime) {
+			this.shakeFlag = false;
+			if (this.shaked) {
+				this.x -= 10;
+				this.shaked = false;
+            }
+        }
+	}
+
+	if (this.blinkFlag) {
+		this.blink_sprite.opacity += this.blink_speed;
+		if (this.blink_sprite.opacity >= 255) {
+			this.blink_speed = -this.blink_speed;
+		}
+		if (this.blink_sprite.opacity <= 0) {
+			this.removeChild(this.blink_sprite);
+			this.blinkFlag = false;
+        }
+	}
+}
+
+Tachi.prototype.shake = function (time) {
+	if (!this.shakeFlag) {
+		this.shakeFlag = true;
+		this.shakeCount = 0;
+		this.shakeTime = time;
+		this.shaked = false;
+	}
+}
+
+Tachi.prototype.blink = function (color) {
+	if (!this.blinkFlag) {
+		this.blink_sprite.tint = color;
+		this.blink_sprite.opacity = 0;
+		this.blink_speed = 25;
+		this.blinkFlag = true;
+		this.addChild(this.blink_sprite);
+		console.log(this);
+	}
+}
+
+//-----------------------------------------------------------------------------
+
+function Emphasizer() {
+	this.initialize.apply(this, arguments);
+}
+
+Emphasizer.prototype = Object.create(Sprite.prototype);
+Emphasizer.prototype.constructor = Emphasizer;
+
+Emphasizer.prototype.initialize = function (x, y, width, height) {
+	Sprite.prototype.initialize.call(this);
+	this.blackCover = new PIXI.Graphics();
+	this.blackCover.beginFill(0x000000);
+	this.blackCover.drawRect(0, 0, Graphics.boxWidth, Graphics.boxHeight);
+	this.blackCover.endFill();
+	this.blackCover.mask = new PIXI.Graphics();
+	this.blackCover.mask.beginFill(0x000000);
+	this.blackCover.mask.drawRect(x, y, width, height);
+	this.blackCover.mask.endFill();
+	this.addChild(this.blackCover);
+}
 
 //⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆⢀⢀⢀⢀⢀⢀⢀⢀⢀⣀⣤⣴⣶⣾⣿⣿⣿⣿⣿⣿⣿⣶⣤⡀
 //⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⢀⢀⢀⢀⢀⢀⣀⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄

@@ -108,7 +108,7 @@ Scene_Base.prototype.start = function() {
  * @instance 
  * @memberof Scene_Base
  */
-Scene_Base.prototype.update = function() {
+Scene_Base.prototype.update = function () {
     this.updateFade();
     this.updateChildren();
 };
@@ -406,6 +406,13 @@ Scene_Boot.prototype.start = function() {
         DataManager.setupNewGame();
         SceneManager.goto(Scene_Title);
         Window_TitleCommand.initCommandPosition();
+
+        ConfigManager.load();
+        ConfigManager.keyMapper = JSON.parse(JSON.stringify(ConfigManager.defaultMap))
+        ConfigManager.applyKeyConfig();
+        ConfigManager.save();
+        ConfigManager.load();
+        Input.gamepadMapper = Input.defaultgamepadInput;
     }
     this.updateDocumentTitle();
 };
@@ -1238,16 +1245,20 @@ Scene_Item.prototype.initialize = function() {
 
 Scene_Item.prototype.create = function() {
     Scene_ItemBase.prototype.create.call(this);
-    this.createHelpWindow();
+    //this.createHelpWindow();
+    this._helpWindow = new Window_ItemHelp(10);
+    this.addWindow(this._helpWindow);
     this.createCategoryWindow();
+    this.createTipsWindow();
     this.createItemWindow();
     this.createActorWindow();
+    this.createSignWindow();
 };
 
 Scene_Item.prototype.createCategoryWindow = function() {
     this._categoryWindow = new Window_ItemCategory();
     this._categoryWindow.setHelpWindow(this._helpWindow);
-    this._categoryWindow.y = this._helpWindow.height;
+    this._categoryWindow.y = 0;
     this._categoryWindow.setHandler('ok',     this.onCategoryOk.bind(this));
     this._categoryWindow.setHandler('cancel', this.popScene.bind(this));
     this.addWindow(this._categoryWindow);
@@ -1255,14 +1266,24 @@ Scene_Item.prototype.createCategoryWindow = function() {
 
 Scene_Item.prototype.createItemWindow = function() {
     var wy = this._categoryWindow.y + this._categoryWindow.height;
-    var wh = Graphics.boxHeight - wy;
-    this._itemWindow = new Window_ItemList(0, wy, Graphics.boxWidth, wh);
+    var wh = Graphics.boxHeight - wy - this._tipsWindow.height;
+    this._itemWindow = new Window_ItemList(0, wy, Graphics.boxWidth*(2/3), wh);
     this._itemWindow.setHelpWindow(this._helpWindow);
     this._itemWindow.setHandler('ok',     this.onItemOk.bind(this));
     this._itemWindow.setHandler('cancel', this.onItemCancel.bind(this));
     this.addWindow(this._itemWindow);
     this._categoryWindow.setItemWindow(this._itemWindow);
 };
+
+Scene_Item.prototype.createTipsWindow = function () {
+    this._tipsWindow = new Window_BottomTips('{Tips_Item}');
+    this.addWindow(this._tipsWindow);
+}
+
+Scene_Item.prototype.createSignWindow = function () {
+    this._signWindow = new Window_Sign();
+    this.addWindow(this._signWindow)
+}
 
 Scene_Item.prototype.user = function() {
     var members = $gameParty.movableMembers();

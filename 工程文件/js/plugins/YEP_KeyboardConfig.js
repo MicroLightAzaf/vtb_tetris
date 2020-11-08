@@ -739,8 +739,9 @@ ConfigManager.makeData = function() {
 Yanfly.KeyConfig.ConfigManager_applyData = ConfigManager.applyData;
 ConfigManager.applyData = function(config) {
   Yanfly.KeyConfig.ConfigManager_applyData.call(this, config);
-    this.keyMapper = this.readKeyConfig(config, 'keyMapper');
+    //this.keyMapper = this.readKeyConfig(config, 'keyMapper');
     this.TetrisKeyMapper = this.readKeyConfig(config, 'TetrisKeyMapper');
+    //this.keyMapper = JSON.parse(JSON.stringify(ConfigManager.defaultMap))
 	this.applyKeyConfig();
 };
 
@@ -887,8 +888,9 @@ Window_KeyConfig.prototype.makeCommandList = function(index) {
 		for (var i = 0; i < 6; ++i) this.addCommand(' ', 'cancel', true);
 };
 
-Window_KeyConfig.prototype.isKeyEnabled = function(keyName) {
-	return !([' ', 'Enter', 'En', '↑', '←',	'↓', '→'].contains(keyName));
+Window_KeyConfig.prototype.isKeyEnabled = function (keyName) {
+    return !([' '].contains(keyName));
+	//return !([' ', 'Enter', 'En', '↑', '←',	'↓', '→'].contains(keyName));
 };
 
 Window_KeyConfig.prototype.itemRect = function(index) {

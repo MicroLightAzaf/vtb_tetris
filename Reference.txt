@@ -13,13 +13,20 @@ Scripts:
 	SumRndmDde http://sumrndm.site/
 	OcRam
 	DKTools
-	
+	McKathlin
+	マンカインド
 
 Resources:
 	SkottyTV Window Skins	by Skotty TV
 	ItaHoly Window Skins	by ItaHoly
 Tilesets:
 	Cossio - Modern TileSets	by Cossio
+ 	Ayene
+	茂吉
+	ぴぽや
+
+Icons:
+	Iconmonstr
 
 灵感参考：
 https://www.pixiv.net/artworks/80389496

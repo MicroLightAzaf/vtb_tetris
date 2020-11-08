@@ -2,10 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\js",
-    "\\js\\libs",
     "\\js\\plugins",
     "\\locales",
-    "\\locales\\cn"
+    "\\locales\\cn",
+    "\\locales\\jp"
   ],
   "SelectedNode": "\\js\\plugins\\Tekoki_Tetris.js",
   "PreviewInSolutionExplorer": false
